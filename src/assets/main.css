@@ -1,0 +1,9 @@
+@import './base.css';
+
+.monospace {
+  font-family: 'Courier New', 'Hack', 'Consolas', Courier, monospace;
+}
+
+.green {
+  color: inherit;
+}
