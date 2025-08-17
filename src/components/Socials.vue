@@ -1,52 +1,64 @@
 <script setup>
-const links = [
-  ['x.com/canonnizq'],
-  ['www.reddit.com/user/CanonNi/'],
-  ['en.wikipedia.org/User:CanonNi'],
-  ['www.youtube.com/@CanonNi'],
-  ['space.bilibili.com/235513366'],
-  ['discord.com/users/1195694156035674135'],
-  ['steamcommunity.com/id/canonni/', 'steam'],
-  ['github.com/canonnizq'],
-  ['bsky.app/profile/canonni.website', 'bluesky'],
-]
-
-const re = /([^.]+)\.(\w+)\//
-const socials = links.map((link) => {
-  const slug = link[0].match(re)[1]
-
-  return {
-    url: 'https://' + link[0],
-    title: slug.charAt(0).toUpperCase() + slug.slice(1),
-    icon: link[1] || slug,
-  }
-})
+const socials = [
+  { link: 'space.bilibili.com/235513366', icon: 'bilibili', title: 'Bilibili' },
+  { link: 'bsky.app/profile/canonni.website', icon: 'bluesky', title: 'Bluesky' },
+  { link: 'discord.com/users/1195694156035674135', icon: 'discord', title: 'Discord' },
+  { link: 'www.flickr.com/photos/200807288@N06/', icon: 'flickr', title: 'Flickr' },
+  { link: 'github.com/canonnizq', icon: 'github', title: 'GitHub' },
+  { link: 'www.instagram.com/canonnizq/', icon: 'instagram', title: 'Insta' },
+  { link: 'medium.com/@CanonNi', icon: 'medium', title: 'Medium' },
+  { link: 'www.reddit.com/user/CanonNi/', icon: 'reddit', title: 'Reddit' },
+  { link: 'steamcommunity.com/id/canonni/', icon: 'steam', title: 'Steam' },
+  { link: 'www.tumblr.com/blog/canonni', icon: 'tumblr', title: 'Tumblr' },
+  { link: 'x.com/canonnizq', icon: 'x', title: 'Twitter' },
+  { link: 'meta.wikimedia.org/wiki/User:CanonNi', icon: 'wikimediafoundation', title: 'Wikimedia' },
+  { link: 'www.youtube.com/@CanonNi', icon: 'youtube', title: 'YouTube' },
+] // to future me: remember to sort alphabetically
 </script>
 
 <template>
   <div class="container">
-    <a v-for="(social, index) in socials" :key="index" :href="social.url" class="social">
-      <img :src="`https://cdn.simpleicons.org/${social.icon}/ebebeba3`" />
+    <a
+      v-for="(social, index) in socials"
+      :key="index"
+      :href="`https://${social.link}`"
+      target="_blank"
+      class="social"
+    >
+      <img height="15" :src="`https://cdn.simpleicons.org/${social.icon}/948979`" />
+      <span class="label">{{ social.title }}</span>
     </a>
   </div>
 </template>
 
 <style scoped>
 .container {
-  margin-top: 5rem;
+  color: var(--text-subtle);
+  gap: 0.5rem;
+  margin: auto;
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
+  width: 30rem;
   align-items: center;
-  color: white;
-  gap: 1rem;
+  justify-content: center;
 }
 
 .social {
-  width: 3.5rem;
-  height: 3.5rem;
-  padding: 0.5rem;
+  padding: 0 0.5rem;
   border: 1px solid;
   border-radius: 1rem;
   color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: box-shadow 0.4s ease;
+}
+.social:hover {
+  box-shadow: var(--background-subtle) 0 0 5px 5px;
+}
+
+.label {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
 }
 </style>

@@ -1,18 +1,30 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 
-const fullTexts = ['CanonNi', 'canonnizq', 'Ni Zeqing', '倪泽青', 'Pongo sapiens', 'Kinney']
+const fullTexts = [
+  'CanonNi',
+  'canonnizq',
+  'Ni Zeqing',
+  '倪泽青',
+  'CNZQ',
+  'Pongo sapiens',
+  'Kinney',
+  'BI4APQ',
+  '13641667828',
+  '{{title.text}}',
+  'T.S. Stiffens',
+]
+
 const displayedText = ref('')
 const typingSpeed = 100
 
 onMounted(() => {
-  let text_idx = 0
   let letter_idx = 0
+  let currentText = ''
 
   const type = () => {
-    const currentText = fullTexts[text_idx % fullTexts.length]
-
     if (letter_idx == 0) {
+      currentText = fullTexts[Math.floor(Math.random() * fullTexts.length)]
       displayedText.value = ''
     }
 
@@ -22,7 +34,6 @@ onMounted(() => {
       setTimeout(type, typingSpeed)
     } else {
       letter_idx = 0
-      text_idx++
       setTimeout(type, typingSpeed * 10)
     }
   }
@@ -32,15 +43,15 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="container green monospace">
+  <div class="container monospace">
     <span class="typewriter">
       {{ displayedText }}
       <span class="cursor">|</span>
     </span>
     <a href="." class="domain">
-      <span class="tooltip left">Yes; that's an actual TLD.</span>
+      <span class="tooltip left">Yup, that's an actual TLD.</span>
       <span class="tld">.website</span>
-      <span class="tooltip right">...pretty apt for a website, huh?</span>
+      <span class="tooltip right">Pretty apt for a website, huh?</span>
     </a>
     <span class="links">
       <a href="https://github.com/canonnizq/canonni.website">source</a>&bull;
@@ -55,7 +66,6 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 50vh;
 }
 
 a {
@@ -68,6 +78,7 @@ a {
   display: inline-block;
   position: relative;
   margin-bottom: -4.5rem;
+  font-weight: bold;
 }
 
 .domain {
@@ -86,15 +97,14 @@ a {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background-color: rgba(0, 189, 126, 0.25);
-  color: #fff;
+  background-color: var(--background-subtle);
+  color: var(--text-normal);
   padding: 0.2rem 0.5rem;
   border-radius: 6px;
   font-size: 1rem;
   white-space: nowrap;
   opacity: 0;
-  transition: opacity 0.4s ease;
-  z-index: 0;
+  transition: opacity 1s ease;
 }
 .domain:hover .tooltip {
   opacity: 0.75;
@@ -105,29 +115,27 @@ a {
   margin-right: 1rem;
 }
 .tooltip.right {
-  right: -130%;
+  right: -120%;
   margin-left: 1rem;
 }
 
 .links {
-  font-size: 1.5rem;
   display: flex;
   justify-content: center;
   align-items: center;
   margin-top: -1rem;
   gap: 0.5rem;
-}
 
+  font-size: 1.5rem;
+  color: var(--text-subtle);
+}
 .links a {
-  padding: 0.25rem 0.25rem;
+  padding: 0rem 0.5rem;
   text-decoration: none;
-  border: 2px solid transparent;
-  border-radius: 2rem;
-  transition: background-color 0.4s ease;
-  position: relative;
+  transition: text-shadow 0.4s ease;
 }
 .links a:hover {
-  background-color: hsla(160, 100%, 37%, 0.2);
+  text-shadow: var(--background-subtle) 0.5rem 0.5rem 0.1rem;
 }
 
 .cursor {

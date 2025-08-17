@@ -7,31 +7,36 @@ import Socials from './components/Socials.vue'
 
 <template>
   <main>
-    <Matrix />
+    <!-- <Matrix /> -->
     <div class="center">
-      <div class="logos">
+      <!-- <div class="logos">
         <img src="/img/lipu.svg" />
         <img src="/img/kamapona.svg" />
-      </div>
-      <Typewriter />
+      </div> -->
       <Subdomains />
+      <Typewriter />
       <Socials />
     </div>
-    <Matrix />
+    <!-- <Matrix /> -->
   </main>
 </template>
 
 <style scoped>
 main {
   display: flex;
+  justify-content: center;
+  align-items: center;
   overflow: hidden;
-  flex-direction: row;
-  justify-content: space-between;
+  height: 100vh;
+
+  user-select: none;
 }
 
 .center {
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 1rem;
 }
 
 .logos {

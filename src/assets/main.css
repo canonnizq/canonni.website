@@ -3,7 +3,6 @@
 .monospace {
   font-family: 'Courier New', 'Hack', 'Consolas', Courier, monospace;
 }
-
-.green {
-  color: inherit;
+.cursive {
+  font-family: 'caveat', cursive;
 }
