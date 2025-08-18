@@ -12,19 +12,36 @@ const fullTexts = [
   'BI4APQ',
   '13641667828',
   '{{title.text}}',
-  'T.S. Stiffens',
 ]
 
 const displayedText = ref('')
 const typingSpeed = 100
 
+const shuffle = (array) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1))
+    ;[array[i], array[j]] = [array[j], array[i]]
+  }
+  return array
+}
+
 onMounted(() => {
   let letter_idx = 0
   let currentText = ''
 
+  let order = shuffle([...fullTexts])
+  let order_idx = 0
+
   const type = () => {
     if (letter_idx == 0) {
-      currentText = fullTexts[Math.floor(Math.random() * fullTexts.length)]
+      currentText = order[order_idx]
+      order_idx++
+
+      if (order_idx >= order.length) {
+        order = shuffle([...fullTexts])
+        order_idx = 0
+      }
+
       displayedText.value = ''
     }
 
