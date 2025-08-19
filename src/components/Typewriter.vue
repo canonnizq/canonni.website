@@ -10,7 +10,6 @@ const fullTexts = [
   'Pongo sapiens',
   'Kinney',
   'BI4APQ',
-  '13641667828',
   '{{title.text}}',
 ]
 
@@ -65,15 +64,17 @@ onMounted(() => {
       {{ displayedText }}
       <span class="cursor">|</span>
     </span>
-    <a href="." class="domain">
-      <span class="tooltip left">Yup, that's an actual TLD.</span>
-      <span class="tld">.website</span>
-      <span class="tooltip right">Pretty apt for a website, huh?</span>
-    </a>
-    <span class="links">
-      <a href="https://github.com/canonnizq/canonni.website">source</a>&bull;
-      <a href="https://afdian.com/a/canonni">sponsor</a>
-    </span>
+    <div class="domain">
+      <span class="tooltip">Yup, that's an actual TLD.</span>
+      <span class="middle">
+        <span class="tld">.website</span>
+        <span class="links">
+          <a target="_blank" href="https://github.com/canonnizq/canonni.website">source</a>&bull;
+          <a target="_blank" href="https://afdian.com/a/canonni">sponsor</a>
+        </span>
+      </span>
+      <span class="tooltip">Pretty apt for a website, huh?</span>
+    </div>
   </div>
 </template>
 
@@ -85,78 +86,14 @@ onMounted(() => {
   justify-content: center;
 }
 
-a {
-  color: inherit;
-}
-
 .typewriter {
   font-size: 5rem;
-  white-space: nowrap;
-  display: inline-block;
-  position: relative;
   margin-bottom: -4.5rem;
   font-weight: bold;
-}
-
-.domain {
-  font-size: 3.5rem;
-  text-decoration: none;
-  display: inline-block;
-  position: relative;
-  text-align: center;
-  margin-top: 2rem;
-}
-.domain .tld {
-  position: relative;
-}
-
-.domain .tooltip {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: var(--background-subtle);
-  color: var(--text-normal);
-  padding: 0.2rem 0.5rem;
-  border-radius: 6px;
-  font-size: 1rem;
-  white-space: nowrap;
-  opacity: 0;
-  transition: opacity 1s ease;
-}
-.domain:hover .tooltip {
-  opacity: 0.75;
-}
-
-.tooltip.left {
-  left: -100%;
-  margin-right: 1rem;
-}
-.tooltip.right {
-  right: -120%;
-  margin-left: 1rem;
-}
-
-.links {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: -1rem;
-  gap: 0.5rem;
-
-  font-size: 1.5rem;
-  color: var(--text-subtle);
+  text-align: center;
 }
-.links a {
-  padding: 0rem 0.5rem;
-  text-decoration: none;
-  transition: text-shadow 0.4s ease;
-}
-.links a:hover {
-  text-shadow: var(--background-subtle) 0.5rem 0.5rem 0.1rem;
-}
-
-.cursor {
-  position: absolute;
+.typewriter .cursor {
   animation: blink 1s infinite;
   right: -0.5em;
   top: 0;
@@ -168,5 +105,58 @@ a {
   50% {
     opacity: 0;
   }
+}
+
+.domain {
+  font-size: 3.5rem;
+  margin-top: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.domain .tooltip {
+  background-color: var(--background-subtle);
+  color: var(--text-normal);
+  padding: 0.2rem 0.5rem;
+  border-radius: 6px;
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 1s ease;
+  height: fit-content;
+}
+.domain:has(.tld:hover) .tooltip {
+  opacity: 0.75;
+}
+@media (max-width: 768px) {
+  .tooltip {
+    display: none;
+  }
+}
+
+.domain .middle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.links {
+  display: flex;
+  margin-top: -1rem;
+  gap: 0.5rem;
+
+  font-size: 1.5rem;
+  color: var(--text-subtle);
+}
+.links a {
+  color: inherit;
+  padding: 0rem 0.5rem;
+  text-decoration: none;
+  transition: text-shadow 0.4s ease;
+}
+.links a:hover {
+  text-shadow: var(--background-subtle) 0.5rem 0.5rem 0.1rem;
 }
 </style>

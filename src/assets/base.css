@@ -46,3 +46,9 @@ body {
   font-weight: normal;
   font-style: normal;
 }
+@font-face {
+  font-family: 'consolas';
+  src: url('@/assets/fonts/consolas.ttf');
+  font-weight: normal;
+  font-style: normal;
+}

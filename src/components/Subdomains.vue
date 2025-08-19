@@ -13,7 +13,7 @@ export default {
     <a
       v-for="subdomain in subdomains"
       :key="index"
-      :href="`http://${subdomain}.canonni.website`"
+      :href="`https://${subdomain}.canonni.website`"
       class="link"
     >
       {{ subdomain }}

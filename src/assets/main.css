@@ -1,7 +1,7 @@
 @import './base.css';
 
 .monospace {
-  font-family: 'Courier New', 'Hack', 'Consolas', Courier, monospace;
+  font-family: 'consolas', monospace;
 }
 .cursive {
   font-family: 'caveat', cursive;
