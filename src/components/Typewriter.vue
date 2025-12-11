@@ -56,14 +56,23 @@ onMounted(() => {
 
   type()
 })
+
+const isMobile = () => {
+  if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+    return true
+  } else {
+    return false
+  }
+}
 </script>
 
 <template>
   <div class="container monospace">
-    <span class="typewriter">
+    <span class="typewriter" v-if="!isMobile()">
       {{ displayedText }}
       <span class="cursor">|</span>
     </span>
+    <span class="typewriter" v-if="isMobile()">CanonNi</span>
     <div class="domain">
       <span class="tooltip">Yup, that's an actual TLD.</span>
       <span class="middle">

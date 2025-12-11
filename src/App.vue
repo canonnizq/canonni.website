@@ -7,17 +7,11 @@ import Socials from './components/Socials.vue'
 
 <template>
   <main>
-    <!-- <Matrix /> -->
     <div class="center">
-      <!-- <div class="logos">
-        <img src="/img/lipu.svg" />
-        <img src="/img/kamapona.svg" />
-      </div> -->
-      <Subdomains />
+      <!-- <Subdomains /> -->
       <Typewriter />
       <Socials />
     </div>
-    <!-- <Matrix /> -->
   </main>
 </template>
 

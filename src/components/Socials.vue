@@ -44,6 +44,11 @@ const socials = [
   align-items: center;
   justify-content: center;
 }
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
+}
 
 .social {
   padding: 0 0.5rem;
