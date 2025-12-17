@@ -1,0 +1,34 @@
+.container {
+  color: var(--text-subtle);
+  gap: 0.5rem;
+  margin: auto;
+  display: flex;
+  flex-wrap: wrap;
+  width: 45%;
+  align-items: center;
+  justify-content: center;
+}
+@media (max-width: 600px) {
+  .container {
+    width: 100%;
+  }
+}
+
+.link {
+  padding: 0 0.5rem;
+  border: 1px solid;
+  border-radius: 1rem;
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  transition: box-shadow 0.4s ease;
+}
+.link:hover {
+  box-shadow: var(--background-subtle) 0 0 5px 5px;
+}
+
+.label {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+}

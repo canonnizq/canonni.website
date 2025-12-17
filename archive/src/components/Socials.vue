@@ -19,13 +19,13 @@ const socials = [
 </script>
 
 <template>
-  <div class="container">
+  <div class="social container">
     <a
       v-for="(social, index) in socials"
       :key="index"
       :href="social.override ? social.link : `https://${social.link}`"
       target="_blank"
-      class="social"
+      class="link"
     >
       <img height="15" :src="`https://cdn.simpleicons.org/${social.icon}/948979`" />
       <span class="label">{{ social.title }}</span>
