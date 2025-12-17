@@ -41,7 +41,7 @@ body {
 }
 
 .monospace {
-  font-family: 'consolas', monospace;
+  font-family: 'consolas', 'courier', monospace;
 }
 .cursive {
   font-family: 'caveat', cursive;
