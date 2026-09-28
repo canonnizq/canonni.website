@@ -1,40 +1,40 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useI18n } from '../i18n/context';
 import styles from '../styles/Socials.module.css';
 
 interface Social {
   link: string;
   icon: string;
-  title: string;
-  color: string;
+  id: string;
   override?: boolean;
 }
 
 const socials: Social[] = [
-  { link: 'space.bilibili.com/235513366', icon: 'bilibili', title: 'Bilibili', color: '#00a1d6' },
-  { link: 'bsky.app/profile/canonni.website', icon: 'bluesky', title: 'Bluesky', color: '#0285ff' },
-  { link: 'discord.com/users/1195694156035674135', icon: 'discord', title: 'Discord', color: '#5865f2' },
-  { link: 'mailto:canonnizq@gmail.com', icon: 'mail.ru', title: 'Email', color: '#948979', override: true },
-  { link: 'www.flickr.com/photos/200807288@N06/', icon: 'flickr', title: 'Flickr', color: '#ff0084' },
-  { link: 'github.com/canonnizq', icon: 'github', title: 'GitHub', color: '#181717' },
-  { link: 'www.instagram.com/canonnizq/', icon: 'instagram', title: 'Insta', color: '#e4405f' },
-  { link: 'mastodon.social/@CanonNi', icon: 'mastodon', title: 'Masto', color: '#6364ff' },
-  { link: 'medium.com/@CanonNi', icon: 'medium', title: 'Medium', color: '#000000' },
-  { link: 'www.reddit.com/user/CanonNi/', icon: 'reddit', title: 'Reddit', color: '#ff4500' },
-  { link: 'steamcommunity.com/id/canonni/', icon: 'steam', title: 'Steam', color: '#000000' },
-  { link: 'www.tumblr.com/blog/canonni', icon: 'tumblr', title: 'Tumblr', color: '#36465d' },
-  { link: 'x.com/canonnizq', icon: 'x', title: 'Twitter', color: '#000000' },
+  { link: 'space.bilibili.com/235513366', icon: 'bilibili', id: 'bilibili' },
+  { link: 'bsky.app/profile/canonni.website', icon: 'bluesky', id: 'bluesky' },
+  { link: 'discord.com/users/1195694156035674135', icon: 'discord', id: 'discord' },
+  { link: 'mailto:canonnizq@gmail.com', icon: 'mail.ru', id: 'email', override: true },
+  { link: 'www.flickr.com/photos/200807288@N06/', icon: 'flickr', id: 'flickr' },
+  { link: 'www.geocaching.com/p/?u=CanonNi', icon: 'geocaching', id: 'geocaching' },
+  { link: 'github.com/canonnizq', icon: 'github', id: 'github' },
+  { link: 'www.instagram.com/canonnizq/', icon: 'instagram', id: 'instagram' },
+  { link: 'mastodon.social/@CanonNi', icon: 'mastodon', id: 'mastodon' },
+  { link: 'medium.com/@CanonNi', icon: 'medium', id: 'medium' },
+  { link: 'www.reddit.com/user/CanonNi/', icon: 'reddit', id: 'reddit' },
+  { link: 'steamcommunity.com/id/canonni/', icon: 'steam', id: 'steam' },
+  { link: 'www.tumblr.com/blog/canonni', icon: 'tumblr', id: 'tumblr' },
+  { link: 'x.com/canonnizq', icon: 'x', id: 'twitter' },
   {
     link: 'meta.wikimedia.org/wiki/User:CanonNi',
     icon: 'wikimediafoundation',
-    title: 'Wikimedia',
-    color: '#000000',
+    id: 'wikimedia',
   },
-  { link: 'www.youtube.com/@CanonNi', icon: 'youtube', title: 'YouTube', color: '#ff0000' },
+  { link: 'www.youtube.com/@CanonNi', icon: 'youtube', id: 'youtube' },
 ];
 
 // Placeholder stats — these will later be replaced by live data pulled from each
 // platform's RSS feed.
-const statPlaceholders = ['Followers', 'Posts'];
+const statLabelKeys = ['socials.followers', 'socials.posts'];
 
 const resolveLink = (social: Social) =>
   social.override ? social.link : `https://${social.link}`;
@@ -49,9 +49,42 @@ const brandTint = (hex: string) => {
   return luminance < 1 ? '#dfd0b8' : hex;
 };
 
+// Neutral fallback shown while a brand color is still being fetched.
+const FALLBACK_COLOR = '#948979';
+
+// The Simple Icons CDN embeds the official brand color in the SVG's fill
+// attribute, so we fetch the icon and read it straight from the source.
+const fetchBrandColor = async (slug: string): Promise<string> => {
+  try {
+    const response = await fetch(`https://cdn.simpleicons.org/${slug}`);
+    if (!response.ok) return FALLBACK_COLOR;
+    const svg = await response.text();
+    const match = /fill="(#[0-9a-fA-F]{6})"/.exec(svg);
+    return match ? match[1] : FALLBACK_COLOR;
+  } catch {
+    return FALLBACK_COLOR;
+  }
+};
+
 export default function Socials() {
+  const { t } = useI18n();
   const [active, setActive] = useState<number | null>(null);
+  const [colors, setColors] = useState<Record<string, string>>({});
   const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    socials.forEach(({ icon }) => {
+      fetchBrandColor(icon).then((color) => {
+        if (!cancelled) {
+          setColors((prev) => (prev[icon] === color ? prev : { ...prev, [icon]: color }));
+        }
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const handlePointerDown = (event: PointerEvent) => {
@@ -75,17 +108,19 @@ export default function Socials() {
     <div ref={containerRef} className={styles.container}>
       {socials.map((social, index) => {
         const expanded = active === index;
-        const panelId = `social-panel-${social.title.toLowerCase()}`;
+        const title = t(`socials.items.${social.id}`);
+        const panelId = `social-panel-${social.id}`;
+        const brand = colors[social.icon] ?? FALLBACK_COLOR;
         const iconSrc = (tint: string) =>
           `https://cdn.simpleicons.org/${social.icon}/${tint}`;
 
         return (
           <div
-            key={social.title}
+            key={social.id}
             style={
               {
-                '--brand': social.color,
-                '--brand-text': brandTint(social.color),
+                '--brand': brand,
+                '--brand-text': brandTint(brand),
               } as CSSProperties
             }
             className={expanded ? `${styles.pill} ${styles.pillExpanded}` : styles.pill}
@@ -98,27 +133,27 @@ export default function Socials() {
               onClick={() => setActive(expanded ? null : index)}
             >
               <img height={15} src={iconSrc('948979')} alt="" />
-              <span className={styles.label}>{social.title}</span>
+              <span className={styles.label}>{title}</span>
             </button>
 
             <div id={panelId} className={styles.panel} aria-hidden={!expanded} inert={!expanded}>
               <div className={styles.panelInner}>
                 <header className={styles.header}>
                   <div className={styles.logoWrap}>
-                    <img className={styles.logo} height={44} src={iconSrc(brandTint(social.color).slice(1))} alt="" />
+                    <img className={styles.logo} height={44} src={iconSrc(brandTint(brand).slice(1))} alt="" />
                   </div>
                   <div className={styles.titleBlock}>
                     <a className={styles.title} href={resolveLink(social)} target="_blank" rel="noopener noreferrer">
-                      {social.title} ↗
+                      {title} ↗
                     </a>
                     <p className={styles.note}>{social.link}</p>
                   </div>
                 </header>
 
                 <div className={styles.stats}>
-                  {statPlaceholders.map((label) => (
-                    <div key={label} className={styles.stat}>
-                      <span className={styles.statLabel}>{label}</span>
+                  {statLabelKeys.map((key) => (
+                    <div key={key} className={styles.stat}>
+                      <span className={styles.statLabel}>{t(key)}</span>
                       <span className={styles.statValue}>—</span>
                     </div>
                   ))}
