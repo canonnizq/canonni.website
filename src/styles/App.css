@@ -16,10 +16,17 @@ main {
 }
 
 .center {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   gap: 1rem;
+
+  /* Soft bloom on the content, driven by the grid effect as the glow passes
+     underneath — keeps the text readable when it is lit from behind. */
+  text-shadow: 0 0 calc(var(--content-lift, 0) * 16px)
+    rgba(241, 229, 206, calc(var(--content-lift, 0) * 0.55));
 }
 
 .logos {
