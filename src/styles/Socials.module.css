@@ -14,7 +14,18 @@
   }
 }
 
-.link {
+.pill {
+  display: grid;
+  grid-template-rows: auto 0fr;
+  grid-template-columns: minmax(0, 1fr);
+  transition: grid-template-rows 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.pillExpanded {
+  grid-template-rows: auto 1fr;
+  flex: 0 0 100%;
+}
+
+.trigger {
   padding: 0 0.5rem;
   border: 1px solid;
   border-radius: 1rem;
@@ -22,13 +33,183 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  transition: box-shadow 0.4s ease;
+  justify-content: center;
+  justify-self: start;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  appearance: none;
+  max-height: 2.5rem;
+  overflow: hidden;
+  transition: box-shadow 0.4s ease, max-height 0.35s ease, opacity 0.25s ease;
 }
-.link:hover {
+.trigger:hover {
   box-shadow: var(--background-subtle) 0 0 5px 5px;
+}
+.pillExpanded .trigger {
+  max-height: 0;
+  opacity: 0;
+  box-shadow: none;
 }
 
 .label {
   margin-left: 0.25rem;
   font-size: 0.75rem;
+}
+
+.panel {
+  overflow: hidden;
+  min-height: 0;
+  width: 0;
+  min-width: 0;
+}
+.pillExpanded .panel {
+  width: auto;
+}
+.panelInner {
+  margin-top: 0.5rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid rgba(148, 137, 121, 0.45);
+  border: 1px solid color-mix(in srgb, var(--brand, #948979) 60%, rgba(57, 62, 70, 0.9));
+  border-radius: 1rem;
+  background: rgba(57, 62, 70, 0.5);
+  background: linear-gradient(
+    120deg,
+    color-mix(in srgb, var(--brand, #948979) 26%, rgba(57, 62, 70, 0.55)),
+    rgba(57, 62, 70, 0.45)
+  );
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition: opacity 0.3s ease 0.08s, transform 0.3s ease 0.08s;
+}
+.pillExpanded .panelInner {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: 0 0 auto;
+}
+
+.logoWrap {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 1rem;
+  flex: 0 0 auto;
+  border: 1px solid rgba(148, 137, 121, 0.4);
+  border: 1px solid color-mix(in srgb, var(--brand, #dfd0b8) 55%, rgba(57, 62, 70, 0.85));
+  background: rgba(57, 62, 70, 0.5);
+  background: color-mix(in srgb, var(--brand, #dfd0b8) 20%, rgba(57, 62, 70, 0.6));
+}
+.pillExpanded .logoWrap {
+  animation: logoIn 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.logo {
+  display: block;
+  filter: drop-shadow(0 0 2px rgba(223, 208, 184, 0.5))
+    drop-shadow(0 0 12px rgba(223, 208, 184, 0.3));
+}
+.pillExpanded .logo {
+  animation: logoFloat 3s ease-in-out 0.55s infinite;
+}
+
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+.title {
+  font-size: 1.15rem;
+  font-weight: bold;
+  color: var(--brand-text, var(--text-subtle));
+  text-decoration: none;
+  transition: text-shadow 0.3s ease;
+}
+.title:hover {
+  text-shadow: var(--background-subtle) 0.3rem 0.3rem 0.1rem;
+}
+
+.stats {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.stat {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid rgba(148, 137, 121, 0.35);
+  border: 1px solid color-mix(in srgb, var(--brand, #948979) 40%, rgba(57, 62, 70, 0.85));
+  border-radius: 0.75rem;
+  background: rgba(0, 0, 0, 0.18);
+}
+.statLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+}
+.statValue {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--brand-text, var(--text-normal));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.note {
+  margin-top: 0.25rem;
+  font-size: 0.7rem;
+  opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+  .panelInner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .stats {
+    width: 100%;
+  }
+}
+
+@keyframes logoIn {
+  0% {
+    transform: scale(0) rotate(-30deg);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+@keyframes logoFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-4px);
+  }
+}
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
