@@ -1,40 +1,39 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { useI18n } from '../i18n/context';
 import styles from '../styles/Socials.module.css';
 
 interface Social {
   link: string;
   icon: string;
-  id: string;
+  title: string;
   override?: boolean;
 }
 
 const socials: Social[] = [
-  { link: 'space.bilibili.com/235513366', icon: 'bilibili', id: 'bilibili' },
-  { link: 'bsky.app/profile/canonni.website', icon: 'bluesky', id: 'bluesky' },
-  { link: 'discord.com/users/1195694156035674135', icon: 'discord', id: 'discord' },
-  { link: 'mailto:canonnizq@gmail.com', icon: 'mail.ru', id: 'email', override: true },
-  { link: 'www.flickr.com/photos/200807288@N06/', icon: 'flickr', id: 'flickr' },
-  { link: 'www.geocaching.com/p/?u=CanonNi', icon: 'geocaching', id: 'geocaching' },
-  { link: 'github.com/canonnizq', icon: 'github', id: 'github' },
-  { link: 'www.instagram.com/canonnizq/', icon: 'instagram', id: 'instagram' },
-  { link: 'mastodon.social/@CanonNi', icon: 'mastodon', id: 'mastodon' },
-  { link: 'medium.com/@CanonNi', icon: 'medium', id: 'medium' },
-  { link: 'www.reddit.com/user/CanonNi/', icon: 'reddit', id: 'reddit' },
-  { link: 'steamcommunity.com/id/canonni/', icon: 'steam', id: 'steam' },
-  { link: 'www.tumblr.com/blog/canonni', icon: 'tumblr', id: 'tumblr' },
-  { link: 'x.com/canonnizq', icon: 'x', id: 'twitter' },
+  { link: 'space.bilibili.com/235513366', icon: 'bilibili', title: 'Bilibili' },
+  { link: 'bsky.app/profile/canonni.website', icon: 'bluesky', title: 'Bluesky' },
+  { link: 'discord.com/users/1195694156035674135', icon: 'discord', title: 'Discord' },
+  { link: 'mailto:canonnizq@gmail.com', icon: 'mail.ru', title: 'Email', override: true },
+  { link: 'www.flickr.com/photos/200807288@N06/', icon: 'flickr', title: 'Flickr' },
+  { link: 'www.geocaching.com/p/?u=CanonNi', icon: 'geocaching', title: 'Geocaching' },
+  { link: 'github.com/canonnizq', icon: 'github', title: 'GitHub' },
+  { link: 'www.instagram.com/canonnizq/', icon: 'instagram', title: 'Insta' },
+  { link: 'mastodon.social/@CanonNi', icon: 'mastodon', title: 'Masto' },
+  { link: 'medium.com/@CanonNi', icon: 'medium', title: 'Medium' },
+  { link: 'www.reddit.com/user/CanonNi/', icon: 'reddit', title: 'Reddit' },
+  { link: 'steamcommunity.com/id/canonni/', icon: 'steam', title: 'Steam' },
+  { link: 'www.tumblr.com/blog/canonni', icon: 'tumblr', title: 'Tumblr' },
+  { link: 'x.com/canonnizq', icon: 'x', title: 'Twitter' },
   {
     link: 'meta.wikimedia.org/wiki/User:CanonNi',
     icon: 'wikimediafoundation',
-    id: 'wikimedia',
+    title: 'Wikimedia',
   },
-  { link: 'www.youtube.com/@CanonNi', icon: 'youtube', id: 'youtube' },
+  { link: 'www.youtube.com/@CanonNi', icon: 'youtube', title: 'YouTube' },
 ];
 
 // Placeholder stats — these will later be replaced by live data pulled from each
 // platform's RSS feed.
-const statLabelKeys = ['socials.followers', 'socials.posts'];
+const statPlaceholders = ['Followers', 'Posts'];
 
 const resolveLink = (social: Social) =>
   social.override ? social.link : `https://${social.link}`;
@@ -67,7 +66,6 @@ const fetchBrandColor = async (slug: string): Promise<string> => {
 };
 
 export default function Socials() {
-  const { t } = useI18n();
   const [active, setActive] = useState<number | null>(null);
   const [colors, setColors] = useState<Record<string, string>>({});
   const containerRef = useRef<HTMLDivElement>(null);
@@ -108,15 +106,14 @@ export default function Socials() {
     <div ref={containerRef} className={styles.container}>
       {socials.map((social, index) => {
         const expanded = active === index;
-        const title = t(`socials.items.${social.id}`);
-        const panelId = `social-panel-${social.id}`;
+        const panelId = `social-panel-${social.title.toLowerCase()}`;
         const brand = colors[social.icon] ?? FALLBACK_COLOR;
         const iconSrc = (tint: string) =>
           `https://cdn.simpleicons.org/${social.icon}/${tint}`;
 
         return (
           <div
-            key={social.id}
+            key={social.title}
             style={
               {
                 '--brand': brand,
@@ -133,7 +130,7 @@ export default function Socials() {
               onClick={() => setActive(expanded ? null : index)}
             >
               <img height={15} src={iconSrc('948979')} alt="" />
-              <span className={styles.label}>{title}</span>
+              <span className={styles.label}>{social.title}</span>
             </button>
 
             <div id={panelId} className={styles.panel} aria-hidden={!expanded} inert={!expanded}>
@@ -144,16 +141,16 @@ export default function Socials() {
                   </div>
                   <div className={styles.titleBlock}>
                     <a className={styles.title} href={resolveLink(social)} target="_blank" rel="noopener noreferrer">
-                      {title} ↗
+                      {social.title} ↗
                     </a>
                     <p className={styles.note}>{social.link}</p>
                   </div>
                 </header>
 
                 <div className={styles.stats}>
-                  {statLabelKeys.map((key) => (
-                    <div key={key} className={styles.stat}>
-                      <span className={styles.statLabel}>{t(key)}</span>
+                  {statPlaceholders.map((label) => (
+                    <div key={label} className={styles.stat}>
+                      <span className={styles.statLabel}>{label}</span>
                       <span className={styles.statValue}>—</span>
                     </div>
                   ))}
