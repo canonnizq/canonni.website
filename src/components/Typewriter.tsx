@@ -1,6 +1,25 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/Typewriter.module.css';
 
+const fullTexts = [
+  'CanonNi',
+  'canonnizq',
+  'Ni Zeqing',
+  '倪泽青',
+  'CNZQ',
+  'Pongo sapiens',
+  'Kinney',
+  'BI4APQ',
+];
+
+const shuffle = (array: string[]) => {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+};
+
 export default function Typewriter() {
   const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
@@ -8,24 +27,6 @@ export default function Typewriter() {
 
   const typingSpeed = 100;
   const [displayedText, setDisplayedText] = useState('');
-  const fullTexts = [
-    'CanonNi',
-    'canonnizq',
-    'Ni Zeqing',
-    '倪泽青',
-    'CNZQ',
-    'Pongo sapiens',
-    'Kinney',
-    'BI4APQ',
-  ];
-
-  const shuffle = (array: string[]) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  };
 
   useEffect(() => {
     let letter_idx = 0;

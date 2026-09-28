@@ -28,12 +28,6 @@ body {
 }
 
 @font-face {
-  font-family: 'caveat';
-  src: url('../assets/caveat.ttf');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
   font-family: 'consolas';
   src: url('../assets/consolas.ttf');
   font-weight: normal;
@@ -42,7 +36,4 @@ body {
 
 .monospace {
   font-family: 'consolas', 'courier', monospace;
-}
-.cursive {
-  font-family: 'caveat', cursive;
 }
