@@ -1,0 +1,7 @@
+name = "canonni-feeds"
+main = "src/index.ts"
+compatibility_date = "2025-09-01"
+
+# Point this at a self-hosted RSSHub instance if rsshub.app is rate-limited.
+[vars]
+RSSHUB_BASE = "https://rsshub.app"

@@ -1,12 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { getStats, type SocialStats } from '../lib/feeds';
 import styles from '../styles/Socials.module.css';
-
-interface Social {
-  link: string;
-  icon: string;
-  title: string;
-  override?: boolean;
-}
+import type { Social } from '../types';
 
 const socials: Social[] = [
   { link: 'space.bilibili.com/235513366', icon: 'bilibili', title: 'Bilibili' },
@@ -31,9 +26,12 @@ const socials: Social[] = [
   { link: 'www.youtube.com/@CanonNi', icon: 'youtube', title: 'YouTube' },
 ];
 
-// Placeholder stats — these will later be replaced by live data pulled from each
-// platform's RSS feed.
-const statPlaceholders = ['Followers', 'Posts'];
+// Stat fields rendered on every card; values come from the feed routes in
+// `src/lib/feeds`, and render as "—" when a platform has no route (yet).
+const statFields: [keyof SocialStats, string][] = [
+  ['followers', 'Followers'],
+  ['posts', 'Posts'],
+];
 
 const resolveLink = (social: Social) =>
   social.override ? social.link : `https://${social.link}`;
@@ -68,6 +66,7 @@ const fetchBrandColor = async (slug: string): Promise<string> => {
 export default function Socials() {
   const [active, setActive] = useState<number | null>(null);
   const [colors, setColors] = useState<Record<string, string>>({});
+  const [stats, setStats] = useState<Record<string, SocialStats>>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -76,6 +75,20 @@ export default function Socials() {
       fetchBrandColor(icon).then((color) => {
         if (!cancelled) {
           setColors((prev) => (prev[icon] === color ? prev : { ...prev, [icon]: color }));
+        }
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    socials.forEach((social) => {
+      getStats(social).then((result) => {
+        if (!cancelled) {
+          setStats((prev) => ({ ...prev, [social.title]: result }));
         }
       });
     });
@@ -148,10 +161,10 @@ export default function Socials() {
                 </header>
 
                 <div className={styles.stats}>
-                  {statPlaceholders.map((label) => (
-                    <div key={label} className={styles.stat}>
+                  {statFields.map(([key, label]) => (
+                    <div key={key} className={styles.stat}>
                       <span className={styles.statLabel}>{label}</span>
-                      <span className={styles.statValue}>—</span>
+                      <span className={styles.statValue}>{stats[social.title]?.[key] ?? '—'}</span>
                     </div>
                   ))}
                 </div>

@@ -32,6 +32,8 @@ jobs:
 
       - name: Generate static files
         run: npm run build
+        env:
+          VITE_FEED_PROXY: ${{ vars.VITE_FEED_PROXY }}
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
