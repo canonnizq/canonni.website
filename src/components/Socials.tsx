@@ -1,30 +1,7 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { getStats, type SocialStats } from '../lib/feeds';
+import { getStats, type SocialStats } from '..';
+import { platforms, type Platform } from '../routes';
 import styles from '../styles/Socials.module.css';
-import type { Social } from '../types';
-
-const socials: Social[] = [
-  { link: 'space.bilibili.com/235513366', icon: 'bilibili', title: 'Bilibili' },
-  { link: 'bsky.app/profile/canonni.website', icon: 'bluesky', title: 'Bluesky' },
-  { link: 'discord.com/users/1195694156035674135', icon: 'discord', title: 'Discord' },
-  { link: 'mailto:canonnizq@gmail.com', icon: 'mail.ru', title: 'Email', override: true },
-  { link: 'www.flickr.com/photos/200807288@N06/', icon: 'flickr', title: 'Flickr' },
-  { link: 'www.geocaching.com/p/?u=CanonNi', icon: 'geocaching', title: 'Geocaching' },
-  { link: 'github.com/canonnizq', icon: 'github', title: 'GitHub' },
-  { link: 'www.instagram.com/canonnizq/', icon: 'instagram', title: 'Insta' },
-  { link: 'mastodon.social/@CanonNi', icon: 'mastodon', title: 'Masto' },
-  { link: 'medium.com/@CanonNi', icon: 'medium', title: 'Medium' },
-  { link: 'www.reddit.com/user/CanonNi/', icon: 'reddit', title: 'Reddit' },
-  { link: 'steamcommunity.com/id/canonni/', icon: 'steam', title: 'Steam' },
-  { link: 'www.tumblr.com/blog/canonni', icon: 'tumblr', title: 'Tumblr' },
-  { link: 'x.com/canonnizq', icon: 'x', title: 'Twitter' },
-  {
-    link: 'meta.wikimedia.org/wiki/User:CanonNi',
-    icon: 'wikimediafoundation',
-    title: 'Wikimedia',
-  },
-  { link: 'www.youtube.com/@CanonNi', icon: 'youtube', title: 'YouTube' },
-];
 
 // Stat fields rendered on every card; values come from the feed routes in
 // `src/lib/feeds`, and render as "—" when a platform has no route (yet).
@@ -33,8 +10,8 @@ const statFields: [keyof SocialStats, string][] = [
   ['posts', 'Posts'],
 ];
 
-const resolveLink = (social: Social) =>
-  social.override ? social.link : `https://${social.link}`;
+const resolveLink = (platform: Platform) =>
+  platform.absolute ? platform.link : `https://${platform.link}`;
 
 // Simple Icons brand colors that are too dark to read on the dark background fall
 // back to the light neutral tint, so the logo stays visible.
@@ -71,7 +48,7 @@ export default function Socials() {
 
   useEffect(() => {
     let cancelled = false;
-    socials.forEach(({ icon }) => {
+    platforms.forEach(({ icon }) => {
       fetchBrandColor(icon).then((color) => {
         if (!cancelled) {
           setColors((prev) => (prev[icon] === color ? prev : { ...prev, [icon]: color }));
@@ -85,10 +62,10 @@ export default function Socials() {
 
   useEffect(() => {
     let cancelled = false;
-    socials.forEach((social) => {
-      getStats(social).then((result) => {
+    platforms.forEach((platform) => {
+      getStats(platform).then((result) => {
         if (!cancelled) {
-          setStats((prev) => ({ ...prev, [social.title]: result }));
+          setStats((prev) => ({ ...prev, [platform.title]: result }));
         }
       });
     });
@@ -117,16 +94,16 @@ export default function Socials() {
 
   return (
     <div ref={containerRef} className={styles.container}>
-      {socials.map((social, index) => {
+      {platforms.map((platform, index) => {
         const expanded = active === index;
-        const panelId = `social-panel-${social.title.toLowerCase()}`;
-        const brand = colors[social.icon] ?? FALLBACK_COLOR;
+        const panelId = `social-panel-${platform.title.toLowerCase()}`;
+        const brand = colors[platform.icon] ?? FALLBACK_COLOR;
         const iconSrc = (tint: string) =>
-          `https://cdn.simpleicons.org/${social.icon}/${tint}`;
+          `https://cdn.simpleicons.org/${platform.icon}/${tint}`;
 
         return (
           <div
-            key={social.title}
+            key={platform.title}
             style={
               {
                 '--brand': brand,
@@ -143,20 +120,30 @@ export default function Socials() {
               onClick={() => setActive(expanded ? null : index)}
             >
               <img height={15} src={iconSrc('948979')} alt="" />
-              <span className={styles.label}>{social.title}</span>
+              <span className={styles.label}>{platform.title}</span>
             </button>
 
             <div id={panelId} className={styles.panel} aria-hidden={!expanded} inert={!expanded}>
               <div className={styles.panelInner}>
                 <header className={styles.header}>
                   <div className={styles.logoWrap}>
-                    <img className={styles.logo} height={44} src={iconSrc(brandTint(brand).slice(1))} alt="" />
+                    <img
+                      className={styles.logo}
+                      height={44}
+                      src={iconSrc(brandTint(brand).slice(1))}
+                      alt=""
+                    />
                   </div>
                   <div className={styles.titleBlock}>
-                    <a className={styles.title} href={resolveLink(social)} target="_blank" rel="noopener noreferrer">
-                      {social.title} ↗
+                    <a
+                      className={styles.title}
+                      href={resolveLink(platform)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {platform.title} ↗
                     </a>
-                    <p className={styles.note}>{social.link}</p>
+                    <p className={styles.note}>{platform.link}</p>
                   </div>
                 </header>
 
@@ -164,7 +151,7 @@ export default function Socials() {
                   {statFields.map(([key, label]) => (
                     <div key={key} className={styles.stat}>
                       <span className={styles.statLabel}>{label}</span>
-                      <span className={styles.statValue}>{stats[social.title]?.[key] ?? '—'}</span>
+                      <span className={styles.statValue}>{stats[platform.title]?.[key] ?? '—'}</span>
                     </div>
                   ))}
                 </div>

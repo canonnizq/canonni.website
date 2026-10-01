@@ -1,5 +1,5 @@
-import GridReveal from './GridReveal';
+import Grid from './Grid';
 import Socials from './Socials';
 import Typewriter from './Typewriter';
 
-export { GridReveal, Socials, Typewriter };
+export { Grid, Socials, Typewriter };

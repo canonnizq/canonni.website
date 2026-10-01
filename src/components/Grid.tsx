@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import styles from '../styles/GridReveal.module.css';
+import styles from '../styles/Grid.module.css';
 
 // Spacing between dots (CSS px), glow radius around the pointer, and easing speed.
 const CELL = 44;
@@ -26,7 +26,7 @@ function readCssVar(name: string, fallback: string): [number, number, number] {
   return value.startsWith('#') ? hexToRgb(value) : hexToRgb(fallback);
 }
 
-export default function GridReveal() {
+export default function Grid() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

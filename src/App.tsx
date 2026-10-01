@@ -1,11 +1,11 @@
 import './styles/App.css';
 
-import { GridReveal, Socials, Typewriter } from './components';
+import { Grid, Socials, Typewriter } from './components';
 
 export default function App() {
   return (
     <main>
-      <GridReveal />
+      <Grid />
       <div className="center">
         <Typewriter />
         <Socials />
