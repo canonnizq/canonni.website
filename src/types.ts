@@ -1,9 +1,3 @@
-export interface Platform {
-  link: string;
-  icon: string;
-  title: string;
-}
-
 export interface FeedItem {
   id?: string;
   url?: string;
@@ -17,16 +11,21 @@ export interface Feed {
   items: FeedItem[];
 }
 
-/** Stats rendered on an expanded Socials card. Any missing key renders as "—". */
-export interface SocialStats {
-  followers?: number;
-  posts?: number;
+/** A single stat rendered on an expanded card. */
+export interface Stat {
+  name?: string;
+  value?: number;
 }
 
-/** A platform's feed source: the RSSHub path plus how its feed maps to stats. */
-export interface FeedRoute {
-  /** Build the RSSHub path from the platform's metadata; `undefined` means unsupported. */
-  path: (metadata: Platform) => string | undefined;
-  /** Derive the displayed stats from the raw feed. */
-  extract: (feed: Feed) => SocialStats;
+/** A social platform: how it looks, where it links, and how to read its feed. */
+export interface Route {
+  title: string;
+  icon: string;
+  link: string;
+  /** Use `link` verbatim instead of prepending `https://` (e.g. `mailto:`). */
+  absolute?: boolean;
+  /** Live stats for this platform; empty until implemented. */
+  stats?: () => Stat[];
+  /** Latest feed items for this platform; empty until implemented. */
+  feed?: () => FeedItem[];
 }

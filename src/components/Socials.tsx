@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
-import { getStats, type SocialStats } from '..';
-import { platforms, type Platform } from '../routes';
+import { getStats } from '..';
+import { routes, type Route } from '../routes';
+import type { Stat } from '../types';
 import styles from '../styles/Socials.module.css';
 
-// Stat fields rendered on every card; values come from the feed routes in
-// `src/lib/feeds`, and render as "—" when a platform has no route (yet).
-const statFields: [keyof SocialStats, string][] = [
-  ['followers', 'Followers'],
-  ['posts', 'Posts'],
-];
+// Stat fields rendered on every card; a route fills them via `stats()` and any
+// missing value renders as "—".
+const statLabels = ['Followers', 'Posts'];
 
-const resolveLink = (platform: Platform) =>
-  platform.absolute ? platform.link : `https://${platform.link}`;
+const resolveLink = (route: Route) =>
+  route.absolute ? route.link : `https://${route.link}`;
 
 // Simple Icons brand colors that are too dark to read on the dark background fall
 // back to the light neutral tint, so the logo stays visible.
@@ -43,12 +41,12 @@ const fetchBrandColor = async (slug: string): Promise<string> => {
 export default function Socials() {
   const [active, setActive] = useState<number | null>(null);
   const [colors, setColors] = useState<Record<string, string>>({});
-  const [stats, setStats] = useState<Record<string, SocialStats>>({});
+  const [stats, setStats] = useState<Record<string, Stat[]>>({});
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
-    platforms.forEach(({ icon }) => {
+    routes.forEach(({ icon }) => {
       fetchBrandColor(icon).then((color) => {
         if (!cancelled) {
           setColors((prev) => (prev[icon] === color ? prev : { ...prev, [icon]: color }));
@@ -62,10 +60,10 @@ export default function Socials() {
 
   useEffect(() => {
     let cancelled = false;
-    platforms.forEach((platform) => {
-      getStats(platform).then((result) => {
+    routes.forEach((route) => {
+      getStats(route).then((result) => {
         if (!cancelled) {
-          setStats((prev) => ({ ...prev, [platform.title]: result }));
+          setStats((prev) => ({ ...prev, [route.title]: result }));
         }
       });
     });
@@ -94,16 +92,16 @@ export default function Socials() {
 
   return (
     <div ref={containerRef} className={styles.container}>
-      {platforms.map((platform, index) => {
+      {routes.map((route, index) => {
         const expanded = active === index;
-        const panelId = `social-panel-${platform.title.toLowerCase()}`;
-        const brand = colors[platform.icon] ?? FALLBACK_COLOR;
-        const iconSrc = (tint: string) =>
-          `https://cdn.simpleicons.org/${platform.icon}/${tint}`;
+        const panelId = `social-panel-${route.title.toLowerCase()}`;
+        const brand = colors[route.icon] ?? FALLBACK_COLOR;
+        const routeStats = stats[route.title] ?? [];
+        const iconSrc = (tint: string) => `https://cdn.simpleicons.org/${route.icon}/${tint}`;
 
         return (
           <div
-            key={platform.title}
+            key={route.title}
             style={
               {
                 '--brand': brand,
@@ -120,7 +118,7 @@ export default function Socials() {
               onClick={() => setActive(expanded ? null : index)}
             >
               <img height={15} src={iconSrc('948979')} alt="" />
-              <span className={styles.label}>{platform.title}</span>
+              <span className={styles.label}>{route.title}</span>
             </button>
 
             <div id={panelId} className={styles.panel} aria-hidden={!expanded} inert={!expanded}>
@@ -137,21 +135,23 @@ export default function Socials() {
                   <div className={styles.titleBlock}>
                     <a
                       className={styles.title}
-                      href={resolveLink(platform)}
+                      href={resolveLink(route)}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      {platform.title} ↗
+                      {route.title} ↗
                     </a>
-                    <p className={styles.note}>{platform.link}</p>
+                    <p className={styles.note}>{route.link}</p>
                   </div>
                 </header>
 
                 <div className={styles.stats}>
-                  {statFields.map(([key, label]) => (
-                    <div key={key} className={styles.stat}>
+                  {statLabels.map((label) => (
+                    <div key={label} className={styles.stat}>
                       <span className={styles.statLabel}>{label}</span>
-                      <span className={styles.statValue}>{stats[platform.title]?.[key] ?? '—'}</span>
+                      <span className={styles.statValue}>
+                        {routeStats.find((stat) => stat.name === label)?.value ?? '—'}
+                      </span>
                     </div>
                   ))}
                 </div>

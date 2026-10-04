@@ -1,4 +1,4 @@
-import type { Feed } from './lib/feeds/types';
+import type { Feed } from './types';
 
 /**
  * Base URL of the feed proxy (the Cloudflare Worker in `worker/`). Set

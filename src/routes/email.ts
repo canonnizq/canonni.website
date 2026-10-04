@@ -1,13 +1,9 @@
-import type { Platform } from '../types';
+import type { Route } from '../types';
 
 export default {
   title: 'Email',
   icon: 'mail.ru',
   link: 'mailto:canonnizq@gmail.com',
   absolute: true,
-  // TODO: implement this platform's RSSHub route.
-  route: {
-    path: () => undefined,
-    extract: () => ({}),
-  },
-} satisfies Platform;
+  // TODO: implement stats() and feed() for this platform.
+} satisfies Route;

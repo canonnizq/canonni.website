@@ -1,4 +1,4 @@
-import type { Platform } from '../types';
+import type { Route } from '../types';
 import bilibili from './bilibili';
 import bluesky from './bluesky';
 import discord from './discord';
@@ -19,10 +19,10 @@ import youtube from './youtube';
 /**
  * Every platform rendered as a pill, in display order.
  *
- * To add a platform: drop a new file in this folder exporting a `Platform`,
+ * To add a platform: drop a new file in this folder exporting a `Route`,
  * then list it here.
  */
-export const platforms: Platform[] = [
+export const routes: Route[] = [
   bilibili,
   bluesky,
   discord,
@@ -41,4 +41,4 @@ export const platforms: Platform[] = [
   youtube,
 ];
 
-export type { Platform } from '../types';
+export type { Route } from '../types';
