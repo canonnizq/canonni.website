@@ -19,8 +19,8 @@ import youtube from './youtube';
 /**
  * Every platform rendered as a pill, in display order.
  *
- * To add a platform: drop a new file in this folder exporting a `Route`,
- * then list it here.
+ * To add a platform: drop a new file in this folder exporting a `Route`, then
+ * list it here. Add `feed` sources if the platform publishes updates.
  */
 export const routes: Route[] = [
   bilibili,

@@ -1,9 +1,10 @@
 import type { Route } from '../types';
 
 export default {
+  id: 'email',
   title: 'Email',
   icon: 'mail.ru',
   link: 'mailto:canonnizq@gmail.com',
   absolute: true,
-  // TODO: implement stats() and feed() for this platform.
+  // Email has no feed.
 } satisfies Route;

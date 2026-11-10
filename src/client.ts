@@ -1,72 +1,50 @@
-import type { Feed } from './types';
+import type { FeedsResponse, RouteFeed } from './types';
 
 /**
- * Base URL of the feed proxy (the Cloudflare Worker in `worker/`). Set
- * VITE_FEED_PROXY in production; locally it defaults to a `wrangler dev` instance.
+ * The feed endpoint is a Vercel function (`api/feeds.ts`) in production and a
+ * Vite dev middleware with the same handler locally, so the client always hits
+ * a same-origin `/api/feeds` and never talks to RSSHub directly.
  */
-const PROXY_BASE = import.meta.env.VITE_FEED_PROXY ?? 'http://localhost:8787';
+const ENDPOINT = '/api/feeds';
 
-const CACHE_TTL = 15 * 60 * 1000;
-const cache = new Map<string, { at: number; value: Feed }>();
+const CACHE_TTL = 10 * 60 * 1000;
+/** The function caps itself around 30s; don't hang the UI if the CDN stalls. */
+const REQUEST_TIMEOUT = 30_000;
 
-/** Fetch an RSSHub path (e.g. `/youtube/user/@CanonNi`) through the proxy. */
-export async function fetchFeed(path: string): Promise<Feed> {
-  const cached = cache.get(path);
+let cached: { at: number; value: Record<string, RouteFeed> } | null = null;
+let inflight: Promise<Record<string, RouteFeed>> | null = null;
+
+/**
+ * Fetch recent updates for every route, keyed by `Route.id`.
+ *
+ * Results are cached in memory for `CACHE_TTL`, and concurrent callers share
+ * one request. Throws when the endpoint itself is unreachable; individual
+ * route failures are reported per entry via `RouteFeed.error`.
+ */
+export async function fetchFeeds(): Promise<Record<string, RouteFeed>> {
   if (cached && Date.now() - cached.at < CACHE_TTL) {
     return cached.value;
   }
-
-  const response = await fetch(`${PROXY_BASE}/rsshub${path}`);
-  if (!response.ok) {
-    throw new Error(`Feed request failed (${response.status}): ${path}`);
+  if (inflight) {
+    return inflight;
   }
 
-  const feed = parseFeed(await response.text(), response.headers.get('content-type'));
-  cache.set(path, { at: Date.now(), value: feed });
-  return feed;
-}
+  inflight = (async () => {
+    try {
+      const response = await fetch(ENDPOINT, {
+        headers: { Accept: 'application/json' },
+        signal: AbortSignal.timeout(REQUEST_TIMEOUT),
+      });
+      if (!response.ok) {
+        throw new Error(`Feed endpoint responded with ${response.status}`);
+      }
+      const payload = (await response.json()) as FeedsResponse;
+      cached = { at: Date.now(), value: payload.feeds ?? {} };
+      return cached.value;
+    } finally {
+      inflight = null;
+    }
+  })();
 
-interface JsonFeedItem {
-  id?: string;
-  url?: string;
-  title?: string;
-  date_published?: string;
-}
-
-/** RSSHub can return JSON Feed, but fall back to parsing RSS/Atom. */
-function parseFeed(body: string, contentType: string | null): Feed {
-  const trimmed = body.trimStart();
-  if (contentType?.includes('json') || trimmed.startsWith('{')) {
-    const json = JSON.parse(body) as {
-      title?: string;
-      home_page_url?: string;
-      items?: JsonFeedItem[];
-    };
-    return {
-      title: json.title,
-      link: json.home_page_url,
-      items: (json.items ?? []).map((item) => ({
-        id: item.id,
-        url: item.url,
-        title: item.title,
-        date: item.date_published,
-      })),
-    };
-  }
-
-  const doc = new DOMParser().parseFromString(body, 'application/xml');
-  const items = [...doc.querySelectorAll('item, entry')].map((entry) => ({
-    id: entry.querySelector('guid, id')?.textContent ?? undefined,
-    url:
-      entry.querySelector('link')?.getAttribute('href') ??
-      entry.querySelector('link')?.textContent ??
-      undefined,
-    title: entry.querySelector('title')?.textContent ?? undefined,
-    date: entry.querySelector('pubDate, updated, published')?.textContent ?? undefined,
-  }));
-
-  return {
-    title: doc.querySelector('channel > title, feed > title')?.textContent ?? undefined,
-    items,
-  };
+  return inflight;
 }
