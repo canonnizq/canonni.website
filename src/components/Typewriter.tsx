@@ -10,6 +10,7 @@ const fullTexts = [
   'Pongo sapiens',
   'Kinney',
   'BI4APQ',
+  'Canonnical',
 ];
 
 const shuffle = (array: string[]) => {
@@ -44,7 +45,7 @@ export default function Typewriter() {
       }
 
       if (letter_idx < currentText.length) {
-        setDisplayedText((prev) => prev + currentText[letter_idx - 1]);
+        setDisplayedText(currentText.slice(0, letter_idx + 1));
         letter_idx++;
         timeoutId = setTimeout(type, typingSpeed);
       } else {
