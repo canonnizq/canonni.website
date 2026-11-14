@@ -27,13 +27,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@font-face {
-  font-family: 'consolas';
-  src: url('../assets/consolas.ttf');
-  font-weight: normal;
-  font-style: normal;
-}
-
 .monospace {
-  font-family: 'consolas', 'courier', monospace;
+  font-family: 'Cascadia Code', 'courier', monospace;
 }

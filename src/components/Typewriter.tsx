@@ -3,14 +3,13 @@ import styles from '../styles/Typewriter.module.css';
 
 const fullTexts = [
   'CanonNi',
-  'canonnizq',
+  'Canonnical',
   'Ni Zeqing',
   '倪泽青',
   'CNZQ',
   'Pongo sapiens',
   'Kinney',
   'BI4APQ',
-  'Canonnical',
 ];
 
 const shuffle = (array: string[]) => {
